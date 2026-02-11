@@ -1,65 +1,53 @@
 # Pressure2Pose
 
-Real-time 3D human pose estimation from plantar pressure insoles using SMPL body model.
+A 3D human pose estimation task from plantar pressure insoles using SMPL body model.
 
 <p align="center">
   <img src="pics/intro.png" width="85%">
 </p>
 
-This repo contains code and design files for the following publications and some reconfigurations:
+This repo contains code and design files for the following publications and some new features:
 
-**[ISCAS 2025]** [High-Resolution Plantar Pressure Insole System for Enhanced Lower Body Biomechanical Analysis](https://ieeexplore.ieee.org/abstract/document/11044303)  
-Junjian Chi, Qingyu Zhang, Zibo Zhang, Andreas Demosthenous and Yu Wu, Circuit and System Group, University College London  
+**[ISCAS 2025]** [High-Resolution Plantar Pressure Insole System for Enhanced Lower Body Biomechanical Analysis](https://ieeexplore.ieee.org/abstract/document/11044303)<br>
+Junjian Chi, Qingyu Zhang, Zibo Zhang, Andreas Demosthenous and Yu Wu, Circuit and System Group, University College London<br>
 ***CNN-LSTM pressure-to-pose pipeline, MediaPipe joint prediction, custom insole hardware design***
 
-**[ISCAS 2026]** Multimodal Smart Insole with Crossbar Crosstalk Compensation for Fall-Risk Prediction  
-Junjian Chi, Zibo Zhang, Qingyu Zhang, Andreas Demosthenous and Yu Wu, Circuit and System Group, University College London  
+**[ISCAS 2026]** Multimodal Smart Insole with Crossbar Crosstalk Compensation for Fall-Risk Prediction<br>
+Junjian Chi, Zibo Zhang, Qingyu Zhang, Andreas Demosthenous and Yu Wu, Circuit and System Group, University College London<br>
 ***Dual-frame readout with dynamic range increment, IMU fusion, fall-risk assessment***
 
-**[Reconfiguration]** Physics-constrained Pressure to SMPL Prediction  
+**[Reconfigurations]** Physics-constrained Pressure to SMPL Prediction<br>
 ***Mediapipe label cleaner, SMPL parameter regression***
 
 This repo provides:
 
-1. **Custom pressure insole hardware** — PCB design, MCU firmware, and data collection code.
+1. **Custom pressure and IMU insole hardware** — PCB design, MCU firmware, and data collection code.
 2. **Physics-constrained label generation** — Cleans noisy MediaPipe 3D joints and fits them to the SMPL body model, producing physically plausible ground truth parameters.
 3. **Pressure2Pose training pipeline** — Predicts SMPL parameters from pressure sequences, recovers full 3D body mesh via forward kinematics.
 
-
 ## Hardware
 
-The insole system consists of a flexible printed circuit (FPC) pressure sensor array with concentric circular electrodes, a custom MCU board based on ESP32-S3 (with analog MUX, TIA readout, DAC excitation, and 6-axis IMU ICM-45686), and a host PC for data collection and model inference.
+The insole system consists of a flexible printed circuit (FPC) pressure sensor array with concentric circular electrodes, a custom MCU board based on ESP32-S3 and a host PC for data collection and model inference.
 
 <p align="center">
   <img src="pics/schematic.png" width="85%">
 </p>
 
-Design files are organized under `hardware/`:
+Design files are organized under [`hardware`](hardware/):
 
-```
-hardware/
-├── insole_fpc_ver1/        # FPC sensor array v1 (Altium SchDoc + PcbDoc)
-├── insole_fpc_ver2/        # FPC sensor array v2 + production gerber
-├── sensor_laser_cut/       # Laser-cut conductive polymer sensor pattern (.dip)
-└── mcu_pcb/                # MCU board (schematic PDF + PcbDoc + gerber)
-```
 
 ### Firmware
 
-<<<<<<< HEAD
-The ESP32-S3 firmware is built with [ESP-IDF v5.x](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/get-started/) and located in `firmware/`. It handles ADC continuous scanning, DAC excitation, MUX control, IMU SPI communication, WiFi UDP streaming, and sensor configuration.
+The ESP32 firmware is built with [ESP-IDF v5.x](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/get-started/) and located in [`firmware`](firmware/). It utilize FreeRTOS to manage tasks like: ADC continuous scanning, DAC excitation, MUX control, IMU SPI communication, WiFi UDP streaming, and sensor configuration.
 
 Flash the firmware step by step:
-=======
-The ESP32-S3 firmware is built with [ESP-IDF v5.x](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/get-started/) and located in `firmware/`.
->>>>>>> 0c0d0fd (First push for implemented files)
 
 ```bash
 cd firmware
 ```
 
 ```bash
-idf.py set-target esp32s3
+idf.py set-target esp32
 ```
 
 ```bash
@@ -72,47 +60,25 @@ idf.py flash monitor
 
 ### Data Recording
 
-<<<<<<< HEAD
-The host-side scripts in `host/` communicate with the insole hardware over WiFi UDP. Recorded data (pressure CSV files and camera videos) should be saved to the `data/` directory under the project root. You can name the recorded files however you like (e.g., `walking1.csv`, `squat_session2.csv`). The filenames used in the Usage section below (such as `walking1`) are just examples — substitute your own filenames when running the commands.
+The host-side scripts in [`host`](host/) communicate with the insole hardware over WiFi UDP. Recorded data (pressure CSV files and camera videos) should be saved to the [`data`](data/) directory under the project root. You can name the recorded files however you like (e.g., `walking1.csv`, `squat_session2.csv`). The filenames used in the Usage section below (such as `walking1`) are just examples — substitute your own filenames when running the commands.
 
 Each pressure CSV contains columns `Matrix_0` and `Matrix_1` (left and right foot), where each cell is a comma-separated string of 495 pressure values (33 rows x 15 columns).
 
 ### Host Tools
 
-- `host/data_log/cam_pressure_record.py` — Records pressure data and camera video simultaneously. The UDP IP, port, and output file paths are hardcoded in the script — edit them before use (default: `192.168.137.1:8999`, sensor grid 33x15).
+- [`host/data_log/cam_pressure_record.py`](host/data_log/cam_pressure_record.py) — Records pressure data and camera video simultaneously. The UDP IP, port, and output file paths are hardcoded in the script — edit them before use (default: `192.168.137.1:8999`, sensor grid 33x15).
 
-- `host/live_pressure_visualize/single_pressure_server.py` — Live pressure heatmap visualization for a single foot insole. Receives UDP packets and renders a real-time 33x15 heatmap.
+- [`host/live_pressure_visualize/single_pressure_server.py`](host/live_pressure_visualize/single_pressure_server.py) — Live pressure heatmap visualization for a single foot insole. Receives UDP packets and renders a real-time 33x15 heatmap.
 
-- `host/live_pressure_visualize/double_pressure_server.py` — Live pressure heatmap for dual-foot insoles (left + right side by side).
+- [`host/live_pressure_visualize/double_pressure_server.py`](host/live_pressure_visualize/double_pressure_server.py) — Live pressure heatmap for dual-foot insoles (left + right side by side).
 
-- `host/live_pressure_visualize/single_pressure_imu_server.py` — Single foot pressure heatmap with IMU data overlay (accelerometer + gyroscope from ICM-45686).
+- [`host/live_pressure_visualize/single_pressure_imu_server.py`](host/live_pressure_visualize/single_pressure_imu_server.py) — Single foot pressure heatmap with IMU data overlay (accelerometer + gyroscope from ICM-45686).
 
-- `host/live_pressure_visualize/double_pressure_imu_server.py` — Dual-foot pressure heatmap with IMU data overlay.
+- [`host/live_pressure_visualize/double_pressure_imu_server.py`](host/live_pressure_visualize/double_pressure_imu_server.py) — Dual-foot pressure heatmap with IMU data overlay.
 
-- `host/inference/realtime_inference.py` — Real-time inference using a trained model. Loads a checkpoint and runs predictions on pressure data. Supports single-frame or sequence processing with optional visualization.
+- [`host/inference/realtime_inference.py`](host/inference/realtime_inference.py) — Real-time inference using a trained model. Loads a checkpoint and runs predictions on pressure data. Supports single-frame or sequence processing with optional visualization.
 
-- `host/visualizer/live_visualizer.py` — Live 3D body visualization using Open3D, displaying the SMPL mesh in real time.
-=======
-The host-side scripts in `host/` communicate with the insole over WiFi UDP. Recorded CSV files should be saved to `data/` under the project root. You can name files however you like — the filenames in Usage below (e.g., `walking1`) are just examples.
-
-Each CSV contains columns `Matrix_0` and `Matrix_1` (left and right foot), each a comma-separated string of 495 values (33 x 15).
-
-### Host Tools
-
-- `host/data_log/cam_pressure_record.py` — Records pressure + camera simultaneously. Edit UDP IP/port and output paths in script before use.
-
-- `host/live_pressure_visualize/single_pressure_server.py` — Live single-foot pressure heatmap.
-
-- `host/live_pressure_visualize/double_pressure_server.py` — Live dual-foot pressure heatmap.
-
-- `host/live_pressure_visualize/single_pressure_imu_server.py` — Single-foot heatmap with IMU overlay.
-
-- `host/live_pressure_visualize/double_pressure_imu_server.py` — Dual-foot heatmap with IMU overlay.
-
-- `host/inference/realtime_inference.py` — Real-time inference with a trained model.
-
-- `host/visualizer/live_visualizer.py` — Live 3D SMPL mesh visualization.
->>>>>>> 0c0d0fd (First push for implemented files)
+- [`host/visualizer/live_visualizer.py`](host/visualizer/live_visualizer.py) — Live 3D body visualization using Open3D, displaying the SMPL mesh in real time.
 
 ## Installation
 
@@ -132,26 +98,18 @@ For ESP32-S3 firmware, install [ESP-IDF v5.x](https://docs.espressif.com/project
 
 ## Usage
 
-<<<<<<< HEAD
-> **Note:** The dataset is not included in this repository. You need to record your own data using the host tools described above, and save the CSV files to the `data/` directory. All filenames below (e.g., `walking1`, `walking1_cleaned`) are examples — replace them with your own filenames.
-=======
-> **Note:** The dataset is not included in this repository. Record your own data with the host tools and save CSVs to `data/`. All filenames below are examples — replace with your own.
->>>>>>> 0c0d0fd (First push for implemented files)
+> **Note:** The dataset is not included in this repository. You need to record your own data using the host tools described above, and save the CSV files to the [`data`](data/) directory. All filenames below (e.g., `walking1`, `walking1_cleaned`) are examples — replace them with your own filenames.
 
 ### 1. Label Generation
 
-**Step 1 — Clean MediaPipe labels** (`preprocessing/clean_mediapipe_labels.py`)
+**Step 1 — Clean MediaPipe labels** ([`preprocessing/clean_mediapipe_labels.py`](preprocessing/clean_mediapipe_labels.py))
 
-<<<<<<< HEAD
 Applies physical constraints to raw MediaPipe 3D joint predictions: bone length consistency, bilateral symmetry, temporal Gaussian smoothing, joint angle limits, and optional gait phase prior.
 
-=======
->>>>>>> 0c0d0fd (First push for implemented files)
 ```bash
 python preprocessing/clean_mediapipe_labels.py --input_csv data/walking1.csv --output_csv data/walking1_cleaned.csv
 ```
 
-<<<<<<< HEAD
 | Flag | Required | Description |
 |------|----------|-------------|
 | `--input_csv` | Yes | Path to the raw MediaPipe CSV file (e.g., `data/walking1.csv`) |
@@ -162,27 +120,14 @@ python preprocessing/clean_mediapipe_labels.py --input_csv data/walking1.csv --o
 | `--smoothing_sigma` | No | Temporal smoothing sigma in frames (default: `2.0`) |
 | `--max_frames` | No | Maximum number of frames to process (default: all) |
 
-**Step 2 — Fit SMPL parameters** (`preprocessing/fit_smpl_physics.py`)
+**Step 2 — Fit SMPL parameters** ([`preprocessing/fit_smpl_physics.py`](preprocessing/fit_smpl_physics.py))
 
 Estimates body shape (betas) from median bone lengths across all frames, then fits lower-body pose per frame using differentiable optimization with joint angle limits and pose priors. Outputs a PKL file containing per-frame SMPL parameters.
 
-=======
-`--input_csv` — path to raw MediaPipe CSV
-`--output_csv` — path to save cleaned CSV
-`--no_symmetry` — disable bilateral symmetry constraint
-`--no_temporal` — disable temporal smoothing
-`--no_gait_prior` — disable gait phase prior
-`--smoothing_sigma` — smoothing sigma in frames (default: `2.0`)
-`--max_frames` — max frames to process (default: all)
-
-**Step 2 — Fit SMPL parameters** (`preprocessing/fit_smpl_physics.py`)
-
->>>>>>> 0c0d0fd (First push for implemented files)
 ```bash
 python preprocessing/fit_smpl_physics.py --input_csv data/walking1_cleaned.csv --output_pkl data/smpl_params/walking1_physics.pkl --num_iterations 200
 ```
 
-<<<<<<< HEAD
 | Flag | Required | Description |
 |------|----------|-------------|
 | `--input_csv` | Yes | Path to the cleaned MediaPipe CSV from Step 1 |
@@ -199,24 +144,7 @@ python preprocessing/fit_smpl_physics.py --input_csv data/walking1_cleaned.csv -
 
 ### 2. Visualize SMPL
 
-- `tools/visualize_smpl_open3d.py` — Interactive 3D SMPL body viewer using Open3D. Supports single-frame inspection with optional joint spheres and skeleton overlay, full sequence playback at configurable FPS, video export to MP4, and frame range selection.
-=======
-`--input_csv` — cleaned CSV from Step 1
-`--output_pkl` — output PKL path (e.g., `data/smpl_params/walking1_physics.pkl`)
-`--smpl_model_path` — SMPL model directory (default: `smpl_models/.../smpl/models`)
-`--gender` — `neutral`, `male`, or `female` (default: `neutral`)
-`--device` — `cuda` or `cpu` (default: `cuda`)
-`--num_iterations` — optimization iterations per frame (default: `300`)
-`--max_frames` — max frames to fit (default: all)
-`--start_frame` — start index, inclusive (default: `0`)
-`--end_frame` — end index, exclusive (default: last)
-`--subsample` — process every N-th frame (default: `1`)
-`--smooth_sigma` — post-fitting smoothing sigma (default: `1.0`)
-
-### 2. Visualize SMPL
-
-- `tools/visualize_smpl_open3d.py` — Interactive 3D SMPL viewer (Open3D). Single frame, sequence playback, video export.
->>>>>>> 0c0d0fd (First push for implemented files)
+- [`tools/visualize_smpl_open3d.py`](tools/visualize_smpl_open3d.py) — Interactive 3D SMPL body viewer using Open3D. Supports single-frame inspection with optional joint spheres and skeleton overlay, full sequence playback at configurable FPS, video export to MP4, and frame range selection.
 
 View a single frame with joint spheres:
 
@@ -230,17 +158,12 @@ Play sequence animation:
 python tools/visualize_smpl_open3d.py --smpl_params data/smpl_params/walking1_physics.pkl --smpl_path smpl_models/SMPL_python_v.1.1.0/SMPL_python_v.1.1.0/smpl/models --play_sequence --fps 30
 ```
 
-<<<<<<< HEAD
 Save as video file:
-=======
-Save as video:
->>>>>>> 0c0d0fd (First push for implemented files)
 
 ```bash
 python tools/visualize_smpl_open3d.py --smpl_params data/smpl_params/walking1_physics.pkl --smpl_path smpl_models/SMPL_python_v.1.1.0/SMPL_python_v.1.1.0/smpl/models --save_video output/walking1.mp4 --fps 30
 ```
 
-<<<<<<< HEAD
 Visualize a specific frame range:
 
 ```bash
@@ -265,27 +188,12 @@ python tools/visualize_smpl_open3d.py --smpl_params data/smpl_params/walking1_ph
 | `--width` | No | Video width in pixels (default: `1280`) |
 | `--height` | No | Video height in pixels (default: `720`) |
 
-- `tools/generate_showcase.py` — Generates side-by-side showcase images: left foot pressure heatmap, right foot pressure heatmap, and 3D SMPL mesh rendering. Outputs 300 DPI PNG images to the specified directory (8 evenly-spaced frames by default).
-=======
-`--smpl_params` — PKL file path
-`--smpl_path` — SMPL model directory
-`--gender` — `neutral`, `male`, or `female` (default: `neutral`)
-`--frame_idx` — frame to view in single-frame mode (default: `0`)
-`--show_joints` / `--show_skeleton` — overlay joints or skeleton
-`--play_sequence` — play full animation
-`--fps` — playback FPS (default: `30`)
-`--start_frame` / `--end_frame` — frame range
-`--save_video` — save to video path (e.g., `output/walking1.mp4`)
-`--width` / `--height` — video resolution (default: `1280x720`)
-
-- `tools/generate_showcase.py` — Pressure heatmap + 3D mesh side-by-side showcase images.
->>>>>>> 0c0d0fd (First push for implemented files)
+- [`tools/generate_showcase.py`](tools/generate_showcase.py) — Generates side-by-side showcase images: left foot pressure heatmap, right foot pressure heatmap, and 3D SMPL mesh rendering. Outputs 300 DPI PNG images to the specified directory (8 evenly-spaced frames by default).
 
 ```bash
 python tools/generate_showcase.py --csv data/walking1_cleaned.csv --pkl data/smpl_params/walking1_physics.pkl --smpl_path smpl_models/SMPL_python_v.1.1.0/SMPL_python_v.1.1.0/smpl/models --output_dir output/showcase
 ```
 
-<<<<<<< HEAD
 | Flag | Required | Description |
 |------|----------|-------------|
 | `--csv` | Yes | Path to pressure CSV file |
@@ -298,22 +206,12 @@ python tools/generate_showcase.py --csv data/walking1_cleaned.csv --pkl data/smp
 | `--pressure_h` | No | Pressure matrix height (default: `33`) |
 | `--pressure_w` | No | Pressure matrix width (default: `15`) |
 
-- `tools/extract_joint_angles.py` — Extracts joint angles from SMPL axis-angle parameters and exports to CSV. Useful for biomechanical gait analysis, range of motion assessment, and clinical reporting.
-=======
-`--csv` — pressure CSV file
-`--pkl` — SMPL parameters PKL file
-`--smpl_path` — SMPL model directory
-`--output_dir` — output directory (default: `output/showcase`)
-`--frames` — specific frame indices (e.g., `--frames 0 50 100`; default: 8 evenly spaced)
-
-- `tools/extract_joint_angles.py` — Extract joint angles from SMPL parameters to CSV.
->>>>>>> 0c0d0fd (First push for implemented files)
+- [`tools/extract_joint_angles.py`](tools/extract_joint_angles.py) — Extracts joint angles from SMPL axis-angle parameters and exports to CSV. Useful for biomechanical gait analysis, range of motion assessment, and clinical reporting.
 
 ```bash
 python tools/extract_joint_angles.py --smpl_params data/smpl_params/walking1_physics.pkl --output output/joint_angles.csv --format euler
 ```
 
-<<<<<<< HEAD
 | Flag | Required | Description |
 |------|----------|-------------|
 | `--smpl_params` | Yes | Path to SMPL parameters PKL file |
@@ -323,96 +221,41 @@ python tools/extract_joint_angles.py --smpl_params data/smpl_params/walking1_phy
 ### 3. Train
 
 Interactive notebook with all 5 model architectures, training loops, comparison table, and visualization:
-=======
-`--smpl_params` — PKL file path
-`--output` — output CSV path
-`--format` — `euler` (radians), `axis_angle`, or `degrees` (default: `euler`)
-
-### 3. Train
-
-Interactive notebook with all 5 architectures:
->>>>>>> 0c0d0fd (First push for implemented files)
 
 ```bash
 jupyter notebook notebooks/train_compare.ipynb
 ```
 
-<<<<<<< HEAD
-Or command-line training using `configs/default.yaml`:
-=======
-Command-line training:
->>>>>>> 0c0d0fd (First push for implemented files)
+Or command-line training using [`configs/default.yaml`](configs/default.yaml):
 
 ```bash
 python train.py --config configs/default.yaml
 ```
 
-<<<<<<< HEAD
 | Flag | Required | Description |
 |------|----------|-------------|
 | `--config` | No | Path to YAML configuration file (default: `configs/default.yaml`) |
 | `--resume` | No | Path to a checkpoint file to resume training from (e.g., `checkpoints/cnn_bigru_epoch_40.pth`) |
 
-To change model architecture, edit `model.type` in `configs/default.yaml`. Available architectures:
+To change model architecture, edit `model.type` in [`configs/default.yaml`](configs/default.yaml).
 
-- `cnn_baseline` — Single-frame CNN baseline. No temporal context; processes each pressure frame independently. Lowest parameter count (~1.09M), serves as the non-temporal reference.
+Training features: TensorBoard logging ([`logs`](logs/)), periodic checkpointing ([`checkpoints`](checkpoints/), every 10 epochs), early stopping (patience=20 on validation MPJPE), gradient clipping (max norm=1.0 for RNN models), LR warmup (5 epochs for Transformer), StepLR scheduler (step=20, gamma=0.5).
 
-- `cnn_bigru` — CNN + Bidirectional GRU (default). Two-layer BiGRU with hidden size 256 aggregates temporal features from a 32-frame sliding window. Bidirectional design captures both past and future context. ~3.71M parameters.
-
-- `cnn_bilstm` — CNN + Bidirectional LSTM. Same architecture as BiGRU but with LSTM cells, adding cell state for longer-range memory. Slightly more parameters (~4.49M) due to the extra gate.
-
-- `cnn_tcn` — CNN + Temporal Convolutional Network. Four dilated causal Conv1d residual blocks with dilation pattern (1, 2, 4, 8), giving a receptive field of 32 frames matching the window size. Fully convolutional, no recurrence. ~3.72M parameters.
-
-- `cnn_transformer` — CNN + Transformer Encoder. Four-layer TransformerEncoder with 8 attention heads, d_model=512, feedforward dim=1024, and sinusoidal positional encoding. Requires LR warmup (5 epochs) for stable training. Largest model (~9.50M parameters).
-
-Training features: TensorBoard logging (`logs/`), periodic checkpointing (`checkpoints/`, every 10 epochs), early stopping (patience=20 on validation MPJPE), gradient clipping (max norm=1.0 for RNN models), LR warmup (5 epochs for Transformer), StepLR scheduler (step=20, gamma=0.5).
-
-Resume training from a checkpoint:
-=======
-`--config` — YAML config path (default: `configs/default.yaml`)
-`--resume` — checkpoint path to resume from
-
-To change model architecture, set `model.type` in `configs/default.yaml`:
-
-- `cnn_baseline` — Single-frame CNN, no temporal context. ~1.09M params.
-
-- `cnn_bigru` — CNN + Bidirectional GRU, h=256, 2 layers. ~3.71M params. (default)
-
-- `cnn_bilstm` — CNN + Bidirectional LSTM, h=256, 2 layers. ~4.49M params.
-
-- `cnn_tcn` — CNN + Temporal Convolutional Network, 4 dilated Conv1d blocks (d=1,2,4,8). ~3.72M params.
-
-- `cnn_transformer` — CNN + Transformer Encoder, 8 heads, 4 layers, d=512. Requires LR warmup. ~9.50M params.
-
-Resume from checkpoint:
->>>>>>> 0c0d0fd (First push for implemented files)
-
-```bash
-python train.py --config configs/default.yaml --resume checkpoints/cnn_bigru_epoch_40.pth
-```
 
 ### 4. Evaluate
 
-<<<<<<< HEAD
 Runs evaluation on the validation or test set. Computes all metrics (MPJPE, PA-MPJPE, per-vertex mesh error, bone length error, per-frame inference time) using differentiable SMPL forward kinematics.
 
-=======
->>>>>>> 0c0d0fd (First push for implemented files)
 ```bash
 python evaluate.py --config configs/default.yaml --checkpoint checkpoints/cnn_bigru_best.pth
 ```
 
-<<<<<<< HEAD
 Evaluate on test split and save metrics to JSON:
-=======
-Save metrics to JSON:
->>>>>>> 0c0d0fd (First push for implemented files)
 
 ```bash
 python evaluate.py --config configs/default.yaml --checkpoint checkpoints/cnn_bigru_best.pth --split test --output output/metrics.json
 ```
 
-<<<<<<< HEAD
 | Flag | Required | Description |
 |------|----------|-------------|
 | `--config` | No | Path to YAML configuration file (default: `configs/default.yaml`) |
@@ -425,21 +268,10 @@ python evaluate.py --config configs/default.yaml --checkpoint checkpoints/cnn_bi
 
 Runs a trained model on new pressure data and saves predicted SMPL parameters as PKL. Handles both single-frame (CNN Baseline) and temporal models (BiGRU/BiLSTM/TCN/Transformer). For temporal models, the sliding window (T=32) is zero-padded at sequence boundaries.
 
-=======
-`--config` — YAML config path (default: `configs/default.yaml`)
-`--checkpoint` — trained model checkpoint
-`--split` — `val` or `test` (default: `val`)
-`--batch_size` — evaluation batch size (default: `16`)
-`--output` — save metrics JSON to this path
-
-### 5. Inference
-
->>>>>>> 0c0d0fd (First push for implemented files)
 ```bash
 python inference.py --config configs/default.yaml --checkpoint checkpoints/cnn_bigru_best.pth --input data/walking1_cleaned.csv --output output/walking1_pred.pkl
 ```
 
-<<<<<<< HEAD
 | Flag | Required | Description |
 |------|----------|-------------|
 | `--config` | Yes | Path to YAML configuration file |
@@ -447,24 +279,12 @@ python inference.py --config configs/default.yaml --checkpoint checkpoints/cnn_b
 | `--input` | Yes | Path to input pressure CSV file |
 | `--output` | No | Path to save predicted SMPL parameters PKL (default: `output/<input_stem>_pred.pkl`) |
 | `--device` | No | Compute device: `cuda` or `cpu` (default: auto-detect) |
-=======
-`--config` — YAML config path
-`--checkpoint` — trained model checkpoint
-`--input` — input pressure CSV
-`--output` — output PKL path (default: `output/<input_stem>_pred.pkl`)
-`--device` — `cuda` or `cpu` (default: auto-detect)
->>>>>>> 0c0d0fd (First push for implemented files)
 
-The output PKL can be visualized directly with `tools/visualize_smpl_open3d.py`.
+The output PKL can be visualized directly with [`tools/visualize_smpl_open3d.py`](tools/visualize_smpl_open3d.py).
 
 ## Methodology
 
-See [docs/methodology.md](docs/methodology.md) for detailed documentation on:
-- Loss function design (joint MSE, vertex MSE, shape/pose regularization, weighting strategy)
-- Evaluation metrics (MPJPE, PA-MPJPE, vertex error, bone length error)
-- Model architecture details (shared CNN encoder, 4 MLP heads, 5 temporal variants)
-- Training configuration and hyperparameters
-- Label generation pipeline (MediaPipe cleaning + physics-aware SMPL fitting)
+See [`docs/methodology.md`](docs/methodology.md) for detailed documentation
 
 ## Acknowledgments
 
