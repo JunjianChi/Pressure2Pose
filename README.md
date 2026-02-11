@@ -6,19 +6,17 @@ Real-time 3D human pose estimation from plantar pressure insoles using SMPL body
   <img src="output/showcase/showcase_frame_0060.png" width="85%">
 </p>
 
-This repo contains code for the following projects:
+This repo contains code and design files for the following publications:
 
 **[ISCAS 2025]** [High-Resolution Plantar Pressure Insole System for Enhanced Lower Body Biomechanical Analysis](https://ieeexplore.ieee.org/abstract/document/11044303)
 
-**[ISCAS 2026 (Accepted)]** Pressure2Pose: Real-Time 3D Human Pose Estimation from Plantar Pressure via Physics-Constrained SMPL Regression
+**[ISCAS 2026 (Accepted)]** Multimodal Smart Insole with Crossbar Crosstalk Compensation for Fall-Risk Prediction
 
-## What's New (ISCAS 2026)
+This repo provides:
 
-The ISCAS 2025 paper used a CNN-LSTM to predict MediaPipe joint coordinates directly from pressure data. The new work extends this in three ways:
-
-1. **Hardware system** — Custom insole with 33x15 capacitive pressure sensors + ICM-45686 IMU per foot, ESP32-S3 WiFi streaming at 30 Hz
-2. **Physics-constrained label generation** — Cleans noisy MediaPipe 3D joints (bone consistency, bilateral symmetry, temporal smoothing) and fits them to the SMPL body model with joint angle limits and pose priors, producing physically plausible ground truth
-3. **SMPL parameter regression** — Instead of predicting raw joint positions, the model predicts SMPL parameters (85-dim: betas + pose + orientation + translation), then recovers the full 3D mesh through SMPL forward kinematics. Five architectures compared: CNN baseline, CNN+GRU, CNN+LSTM, CNN+TCN, CNN+Transformer
+1. **Custom pressure insole hardware** — PCB design, sensor layout, MCU firmware, and host-side data collection tools
+2. **Physics-constrained label generation** — Cleans noisy MediaPipe 3D joints and fits them to the SMPL body model, producing physically plausible ground truth parameters
+3. **Multi-architecture training pipeline** — Predicts SMPL parameters from pressure sequences, recovers full 3D body mesh via forward kinematics. Five architectures compared (CNN, CNN+GRU, CNN+LSTM, CNN+TCN, CNN+Transformer)
 
 ## Hardware
 
@@ -29,7 +27,7 @@ hardware/
 ├── insole_fpc_ver1/      # FPC sensor array v1 (Altium SchDoc + PcbDoc)
 ├── insole_fpc_ver2/      # FPC sensor array v2 + gerber
 ├── sensor_laser_cut/     # Laser-cut pressure sensor pattern
-└── mcu_pcb/              # ESP32-S3 MCU board (schematic PDF + gerber)
+└── mcu_pcb/              # MCU board (schematic PDF + gerber)
 ```
 
 **Flash firmware** (requires [ESP-IDF v5.x](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/get-started/)):
@@ -159,42 +157,6 @@ python tools/inference.py \
 ```
 
 The output PKL can be visualized with `tools/visualize_smpl_open3d.py`.
-
-## Project Structure
-
-```
-Pressure2Pose/
-├── firmware/                        # ESP32-S3 firmware (ESP-IDF)
-├── hardware/                        # PCB + sensor design (Altium)
-├── host/                            # Host-side applications
-│   ├── data_log/                    #   Pressure + camera recording
-│   ├── live_pressure_visualize/     #   Real-time pressure heatmap
-│   ├── inference/                   #   Real-time pose inference
-│   └── preprocessing/               #   Raw data cleaning
-├── tools/                           # Core pipeline scripts
-│   ├── clean_mediapipe_labels.py    #   Step 1: Physical cleaning
-│   ├── fit_smpl_physics.py          #   Step 2: SMPL fitting
-│   ├── visualize_smpl_open3d.py     #   Step 3: 3D visualization
-│   ├── train.py                     #   Model training
-│   ├── evaluate.py                  #   Model evaluation
-│   ├── inference.py                 #   Batch inference
-│   └── generate_showcase.py         #   Showcase image generation
-├── models/                          # Neural network architectures
-│   ├── pressure_to_smpl.py          #   PressureEncoder + SMPLRegressor
-│   └── temporal_models.py           #   GRU / LSTM / TCN / Transformer
-├── datasets/                        # PyTorch datasets
-│   ├── pressure_dataset.py          #   Single-frame dataset
-│   └── pressure_sequence_dataset.py #   Sliding-window temporal dataset
-├── utils/                           # Metrics, config, logging
-├── configs/                         # YAML configs
-├── examples/
-│   └── train_compare.ipynb          # Multi-model training notebook
-├── docs/
-│   └── methodology.md               # Technical details (loss, metrics)
-├── data/                            # Walking data (CSV + SMPL PKL)
-├── smpl_models/                     # SMPL model (download separately)
-└── requirements.txt
-```
 
 ## Acknowledgments
 
