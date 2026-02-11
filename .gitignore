@@ -53,3 +53,20 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Data & models (large files)
+data/
+checkpoints/
+smpl_models/
+logs/
+output/
+
+# Claude Code
+.claude/

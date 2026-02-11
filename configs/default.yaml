@@ -1,0 +1,78 @@
+# Default configuration for Pressure2Pose training
+
+# Model configuration
+model:
+  type: 'cnn_bigru'
+  feature_dim: 512
+  num_betas: 10
+  num_joints: 23
+  seq_len: 32
+  # BiGRU / BiLSTM
+  hidden_dim: 256
+  num_layers: 2
+
+# SMPL configuration
+smpl:
+  model_path: 'smpl_models/SMPL_python_v.1.1.0/SMPL_python_v.1.1.0/smpl/models'
+  gender: 'neutral'
+
+# Dataset configuration
+dataset:
+  data_root: 'data'
+  train_sequences: ['walking1', 'walking2', 'walking3', 'walking4']
+  val_sequences: ['walking5']
+  test_sequences: []
+
+  # Pressure sensor shape per frame: [channels, height, width]
+  # Each foot = 33 rows x 15 cols = 495 sensors, 2 feet stacked as channels
+  pressure_shape: [2, 33, 15]
+  normalize: true
+
+# Training configuration
+training:
+  batch_size: 16
+  num_workers: 4
+  epochs: 80
+
+  # Optimizer
+  optimizer:
+    type: 'Adam'
+    lr: 0.0001
+    weight_decay: 0.0001
+
+  # Learning rate scheduler
+  scheduler:
+    type: 'StepLR'
+    step_size: 20
+    gamma: 0.5
+
+  # Loss weights
+  loss:
+    lambda_joints: 1.0
+    lambda_vertices: 0.5
+    lambda_betas: 0.01
+    lambda_pose: 0.001
+
+  # Gradient clipping (for RNN models)
+  grad_clip: 1.0
+
+  # Early stopping
+  patience: 20
+
+  # LR warmup (for Transformer)
+  warmup_epochs: 5
+
+# Evaluation configuration
+evaluation:
+  metrics: ['MPJPE', 'PA-MPJPE', 'vertex_error', 'bone_length_error']
+
+# Logging
+logging:
+  checkpoint_dir: 'checkpoints'
+  save_interval: 10
+  use_tensorboard: true
+  log_dir: 'logs'
+
+# Hardware
+device: 'cuda'
+seed: 42
