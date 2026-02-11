@@ -6,17 +6,22 @@ Real-time 3D human pose estimation from plantar pressure insoles using SMPL body
   <img src="output/showcase/showcase_frame_0060.png" width="85%">
 </p>
 
-This repo contains code and design files for the following publications:
+This repo contains code and design files for the following publications and some reconfigurations:
 
 **[ISCAS 2025]** [High-Resolution Plantar Pressure Insole System for Enhanced Lower Body Biomechanical Analysis](https://ieeexplore.ieee.org/abstract/document/11044303)
+<br>CNN-LSTM pressure-to-pose pipeline, MediaPipe joint prediction, custom insole hardware design
 
-**[ISCAS 2026 (Accepted)]** Multimodal Smart Insole with Crossbar Crosstalk Compensation for Fall-Risk Prediction
+**[ISCAS 2026]** Multimodal Smart Insole with Crossbar Crosstalk Compensation for Fall-Risk Prediction
+<br>Dual-frame readout with dynamic range increment, IMU fusion, fall-risk assessment
+
+**[Reconfiguration]** Physics-constrained Pressure to SMPL Predection
+<br>New in this repo: Mediapipe label cleaner, SMPL parameter regression
 
 This repo provides:
 
-1. **Custom pressure insole hardware** — PCB design, sensor layout, MCU firmware, and host-side data collection tools
-2. **Physics-constrained label generation** — Cleans noisy MediaPipe 3D joints and fits them to the SMPL body model, producing physically plausible ground truth parameters
-3. **Multi-architecture training pipeline** — Predicts SMPL parameters from pressure sequences, recovers full 3D body mesh via forward kinematics. Five architectures compared (CNN, CNN+GRU, CNN+LSTM, CNN+TCN, CNN+Transformer)
+1. **Custom pressure insole hardware** — PCB design, MCU firmware, and data collection code.
+2. **Physics-constrained label generation** — Cleans noisy MediaPipe 3D joints and fits them to the SMPL body model, producing physically plausible ground truth parameters.
+3. **Pressure2Pose training pipeline** — Predicts SMPL parameters from pressure sequences, recovers full 3D body mesh via forward kinematics.
 
 ## Hardware
 
