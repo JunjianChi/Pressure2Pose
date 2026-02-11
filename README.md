@@ -8,15 +8,15 @@ Real-time 3D human pose estimation from plantar pressure insoles using SMPL body
 
 This repo contains code and design files for the following publications and some reconfigurations:
 
-**[ISCAS 2025]** [High-Resolution Plantar Pressure Insole System for Enhanced Lower Body Biomechanical Analysis](https://ieeexplore.ieee.org/abstract/document/11044303)
-Junjian Chi, Qingyu Zhang, Zibo Zhang, Andreas Demosthenous and Yu Wu, Circuit and System Group, University College London
+**[ISCAS 2025]** [High-Resolution Plantar Pressure Insole System for Enhanced Lower Body Biomechanical Analysis](https://ieeexplore.ieee.org/abstract/document/11044303)  
+Junjian Chi, Qingyu Zhang, Zibo Zhang, Andreas Demosthenous and Yu Wu, Circuit and System Group, University College London  
 ***CNN-LSTM pressure-to-pose pipeline, MediaPipe joint prediction, custom insole hardware design***
 
-**[ISCAS 2026]** Multimodal Smart Insole with Crossbar Crosstalk Compensation for Fall-Risk Prediction
-Junjian Chi, Zibo Zhang, Qingyu Zhang, Andreas Demosthenous and Yu Wu, Circuit and System Group, University College London
+**[ISCAS 2026]** Multimodal Smart Insole with Crossbar Crosstalk Compensation for Fall-Risk Prediction  
+Junjian Chi, Zibo Zhang, Qingyu Zhang, Andreas Demosthenous and Yu Wu, Circuit and System Group, University College London  
 ***Dual-frame readout with dynamic range increment, IMU fusion, fall-risk assessment***
 
-**[Reconfiguration]** Physics-constrained Pressure to SMPL Predection
+**[Reconfiguration]** Physics-constrained Pressure to SMPL Prediction  
 ***Mediapipe label cleaner, SMPL parameter regression***
 
 This repo provides:
