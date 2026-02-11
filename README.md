@@ -105,16 +105,10 @@ Interactive 3D viewer (Open3D):
 
 ```bash
 # Single frame
-python tools/visualize_smpl_open3d.py \
-    --smpl_params data/smpl_params/walking1_physics.pkl \
-    --smpl_path smpl_models/SMPL_python_v.1.1.0/SMPL_python_v.1.1.0/smpl/models \
-    --frame_idx 10 --show_joints
+python tools/visualize_smpl_open3d.py --smpl_params data/smpl_params/walking1_physics.pkl --smpl_path smpl_models/SMPL_python_v.1.1.0/SMPL_python_v.1.1.0/smpl/models --frame_idx 10 --show_joints
 
 # Play sequence
-python tools/visualize_smpl_open3d.py \
-    --smpl_params data/smpl_params/walking1_physics.pkl \
-    --smpl_path smpl_models/SMPL_python_v.1.1.0/SMPL_python_v.1.1.0/smpl/models \
-    --play_sequence --fps 30
+python tools/visualize_smpl_open3d.py --smpl_params data/smpl_params/walking1_physics.pkl --smpl_path smpl_models/SMPL_python_v.1.1.0/SMPL_python_v.1.1.0/smpl/models --play_sequence --fps 30
 ```
 
 ### 4. Generate showcase images
