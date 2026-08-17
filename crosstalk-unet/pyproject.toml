@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crosstalk"
+version = "0.1.0"
+description = "U-Net crosstalk correction for the 253-cell crossbar insole readout"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "torch",
+    "pandas",
+    "matplotlib",
+    "scipy",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.setuptools]
+packages = ["crosstalk"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

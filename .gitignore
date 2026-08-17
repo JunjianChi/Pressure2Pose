@@ -1,0 +1,41 @@
+.DS_Store
+__pycache__/
+*.pyc
+*.so
+*.egg-info/
+.venv/
+venv/
+build/
+.env
+.pytest_cache/
+.ruff_cache/
+.vscode/
+
+# datasets and run artifacts (regenerated, never committed)
+# anchored so the package submodule posesim/data/ is NOT ignored
+/crosstalk-unet/data/
+/pose-estimation/data/
+checkpoints/
+runs/
+outputs/
+/pose-estimation/figs-g5/
+scratch/
+*.pt
+*.npz
+*.pkl
+# downloaded dataset / model archives (SMPL-H, AMASS) — never commit
+*.tar
+*.tar.*
+*.bz2
+*.xz
+*.crdownload
+
+# local-only, not published
+CLAUDE.md
+.claude/
+.superpowers/
+**/docs/
+
+.worktrees/
+/pose-estimation/runs-v2/
+/pose-estimation/results/

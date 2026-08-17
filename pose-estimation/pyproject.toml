@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "posesim"
+version = "0.1.0"
+description = "Lower-body pose from plantar pressure and a distal-shank inertial channel"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+dependencies = [
+    "numpy",
+    "scipy",
+    "torch",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+smpl = ["smplx"]
+
+[tool.setuptools]
+packages = [
+    "posesim",
+    "posesim.analysis",
+    "posesim.shank_imu",
+    "posesim.data",
+    "posesim.model",
+    "posesim.signal",
+]
+
+[tool.setuptools.package-data]
+"posesim.shank_imu" = ["*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

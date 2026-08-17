@@ -1,0 +1,13 @@
+{
+  "schema": "shank-imu-antialias-contract-v1",
+  "sample_rate_hz": 100.0,
+  "design": "kaiser_windowed_sinc",
+  "taps": 41,
+  "cutoff_hz": 25.0,
+  "beta": 5.65326,
+  "passband_hz": 20.0,
+  "stopband_hz": 30.0,
+  "group_delay_s": 0.2,
+  "coefficients_sha256": "b6fd19964ccf7a0663fc6ae1a72c7a856dcd07b450b14356bee5379cb7454e09",
+  "frozen": "2026-08-13, from the 23-subject all-cohort mechanical T0-sim evidence recorded in opensim-gates.md; a revision issues a new contract version"
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "shank-imu-state-contract-v1",
+  "sample_rate_hz": 100.0,
+  "buffer_samples": 35,
+  "evaluation_lag_samples": 14,
+  "group_delay_s": 0.14,
+  "smoothing_fir": {
+    "design": "hamming_windowed_sinc",
+    "taps": 15,
+    "cutoff_hz": 6.0,
+    "coefficients_sha256": "aad9085e003e0b10c1a43578ea390350fd2b1c9ed3669830d321507df4e72034"
+  },
+  "smoothing_spline": {
+    "implementation": "scipy.interpolate.make_smoothing_spline",
+    "degree": 3,
+    "lambda": "gcv"
+  },
+  "rotational_unwrap": "numpy.unwrap over each rotational column of the full series before filtering",
+  "validity": "physical samples before evaluation coverage and the trailing evaluation_lag_samples are invalid"
+}

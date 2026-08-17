@@ -1,0 +1,133 @@
+{
+  "schema": "shank-imu-anatomical-frame-contract-v1",
+  "operational_axes": {
+    "x": "anterior",
+    "y": "proximal",
+    "z": "subject_right"
+  },
+  "template_sha256": "efc015c5e21a741d457c6bcaf81f37d4e1a988f73f0bef573776aca05d33f1fb",
+  "derivative_sha256": "e870ea0e0d1c0b09ac9f8b9a93e729b0b82b9c445bbce6fd78ec0195c174136c",
+  "tibia_to_anatomical": {
+    "left": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "right": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  "evidence": {
+    "admission_script": "scripts/check_virtual_frame_axes.py",
+    "default_pose_rotation_max_abs_dev_from_identity": {
+      "left": 0.0,
+      "right": 0.0
+    },
+    "ankle_offset_in_tibia_m": {
+      "left": [
+        0.0,
+        -0.425065,
+        0.0
+      ],
+      "right": [
+        0.0,
+        -0.425065,
+        0.0
+      ]
+    },
+    "lm_station_m": {
+      "left": [
+        0.00379583,
+        -0.428487,
+        -0.054293
+      ],
+      "right": [
+        -0.00495937,
+        -0.430754,
+        0.0549299
+      ]
+    },
+    "toe_minus_heel_ground_x_m": {
+      "left": 0.2838004,
+      "right": 0.2911933
+    }
+  },
+  "installation": {
+    "status": "project_defined_candidate",
+    "derivation": "sensing point 0.065 m proximal of the ankle joint centre (0, -0.425065, 0) on the lateral skin surface: lateral standoff 0.065 m covers the mean |LM z| 0.05461145 plus board and strap clearance; one board design on each lateral surface, so the right imu shares the tibia axes and the left imu is the same board rotated by pi about +y",
+    "p_s_in_t_m": {
+      "right": [
+        0.0,
+        -0.360065,
+        0.065
+      ],
+      "left": [
+        0.0,
+        -0.360065,
+        -0.065
+      ]
+    },
+    "r_ts": {
+      "right": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "left": [
+        [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      ]
+    }
+  }
+}
